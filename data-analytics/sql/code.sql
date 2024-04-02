@@ -1,26 +1,26 @@
 -- COUNTRIES WITH CONTINENTS
 -- rinomina delle intestazioni di colonna
 
-CREATE OR REPLACE TABLE `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Countries With Continents` AS
+CREATE OR REPLACE TABLE `your_repository.Countries With Continents` AS
 SELECT string_field_0 AS country,
        string_field_1 AS continent,
-FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Countries With Continents`;
+FROM `your_repository.Countries With Continents`;
 
 -- GLOBAL COUNTRY INFORMATION DATASET
 -- rimuovo i simboli $ e , dalla colonna gdp e casto come INT64 gdp
 
-CREATE OR REPLACE TABLE `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Country Information Dataset` AS
+CREATE OR REPLACE TABLE `your_repository.Global Country Information Dataset` AS
 SELECT *, 
        SAFE_CAST(REPLACE(REPLACE(gdp, '$', ''), ',', '') AS INT64) AS gdp_update
-FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Country Information Dataset`;
+FROM `your_repository.Global Country Information Dataset`;
 
-ALTER TABLE `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Country Information Dataset`
+ALTER TABLE `your_repository.Global Country Information Dataset`
 DROP COLUMN gdp;
 
 -- GLOBAL DATA ON SUSTAINABLE ENERGY
 -- rinomina delle intestazioni di colonna
 
-CREATE OR REPLACE TABLE `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy` AS
+CREATE OR REPLACE TABLE `your_repository.Global Data On Sustainable Energy` AS
 SELECT Entity AS country,
        Year AS year,
        Access_to_electricity____of_population_ AS access_to_electricity,
@@ -41,13 +41,13 @@ SELECT Entity AS country,
        Longitude AS longitude,
        gdp_growth AS gdp_growth,
        gdp_per_capita AS gdp_per_capita
-FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`;
+FROM `your_repository.Global Data On Sustainable Energy`;
 
 -- ANALISI 1
 -- Quali sono i continenti con più popolazione?
 SELECT continent, SUM(population) AS tot_population
-FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Country Information Dataset` AS global_country_info
-LEFT JOIN `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Countries With Continents` AS country_continents
+FROM `your_repository.Global Country Information Dataset` AS global_country_info
+LEFT JOIN `your_repository.Countries With Continents` AS country_continents
 ON global_country_info.country = country_continents.country
 GROUP BY continent
 ORDER BY tot_population DESC;
@@ -55,8 +55,8 @@ ORDER BY tot_population DESC;
 -- ANALISI 2
 -- Quali sono i continenti con più emissioni?
 SELECT continent, SUM(co2_emissions) AS tot_co2_emissions
-FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Country Information Dataset` AS global_country_info
-LEFT JOIN `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Countries With Continents` AS country_continents
+FROM `your_repository.Global Country Information Dataset` AS global_country_info
+LEFT JOIN `your_repository.Countries With Continents` AS country_continents
 ON global_country_info.country = country_continents.country
 GROUP BY continent
 ORDER BY tot_co2_emissions DESC;
@@ -64,8 +64,8 @@ ORDER BY tot_co2_emissions DESC;
 -- ANALISI 2.1
 -- Quali sono le country con più emissioni e a che continente appartengono?
 SELECT global_country_info.country, country_continents.continent, SUM(co2_emissions) AS tot_co2_emissions
-FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Country Information Dataset` AS global_country_info
-LEFT JOIN `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Countries With Continents` AS country_continents
+FROM `your_repository.Global Country Information Dataset` AS global_country_info
+LEFT JOIN `your_repository.Countries With Continents` AS country_continents
 ON global_country_info.country = country_continents.country
 GROUP BY global_country_info.country, country_continents.continent
 ORDER BY tot_co2_emissions DESC
@@ -77,8 +77,8 @@ SELECT global_country_info.country,
   country_continents.continent, 
   co2_emissions,
   ROUND((co2_emissions / SUM(co2_emissions) OVER (PARTITION BY country_continents.continent)) * 100, 2) AS percent_of_continent_emissions
-FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Country Information Dataset` AS global_country_info
-LEFT JOIN `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Countries With Continents` AS country_continents
+FROM `your_repository.Global Country Information Dataset` AS global_country_info
+LEFT JOIN `your_repository.Countries With Continents` AS country_continents
 ON global_country_info.country = country_continents.country
 GROUP BY global_country_info.country, country_continents.continent, co2_emissions
 ORDER BY co2_emissions DESC, percent_of_continent_emissions DESC
@@ -90,8 +90,8 @@ SELECT global_country_info.country,
   country_continents.continent, 
   co2_emissions,
   ROUND((co2_emissions / SUM(co2_emissions) OVER (PARTITION BY country_continents.continent)) * 100, 2) AS percent_of_continent_emissions
-FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Country Information Dataset` AS global_country_info
-LEFT JOIN `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Countries With Continents` AS country_continents
+FROM `your_repository.Global Country Information Dataset` AS global_country_info
+LEFT JOIN `your_repository.Countries With Continents` AS country_continents
 ON global_country_info.country = country_continents.country
 GROUP BY global_country_info.country, country_continents.continent, co2_emissions
 ORDER BY percent_of_continent_emissions DESC, co2_emissions DESC
@@ -100,8 +100,8 @@ LIMIT 10;
 -- ANALISI 3
 -- Quali sono i continenti con maggiori emissioni per capita?
 SELECT continent, ROUND(SUM(co2_emissions)/SUM(population),4) AS co2_emissions_per_capita
-FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Country Information Dataset` AS global_country_info
-LEFT JOIN `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Countries With Continents` AS country_continents
+FROM `your_repository.Global Country Information Dataset` AS global_country_info
+LEFT JOIN `your_repository.Countries With Continents` AS country_continents
 ON global_country_info.country = country_continents.country
 GROUP BY continent
 ORDER BY co2_emissions_per_capita DESC;
@@ -109,8 +109,8 @@ ORDER BY co2_emissions_per_capita DESC;
 -- ANALISI 4
 -- Quali sono i continenti con il maggior numero di forze armate?
 SELECT continent, SUM(armed_forces_size) AS tot_armed_forces
-FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Country Information Dataset` AS global_country_info
-LEFT JOIN `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Countries With Continents` AS country_continents
+FROM `your_repository.Global Country Information Dataset` AS global_country_info
+LEFT JOIN `your_repository.Countries With Continents` AS country_continents
 ON global_country_info.country = country_continents.country
 GROUP BY continent
 ORDER BY tot_armed_forces DESC;
@@ -118,8 +118,8 @@ ORDER BY tot_armed_forces DESC;
 -- ANALISI 4.1
 -- Quali sono i continenti con il più alto rapporto tra forze armate e popolazione?
 SELECT continent, ROUND(SUM(armed_forces_size)/SUM(population),4) AS armed_forces_per_capita
-FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Country Information Dataset` AS global_country_info
-LEFT JOIN `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Countries With Continents` AS country_continents
+FROM `your_repository.Global Country Information Dataset` AS global_country_info
+LEFT JOIN `your_repository.Countries With Continents` AS country_continents
 ON global_country_info.country = country_continents.country
 GROUP BY continent
 ORDER BY armed_forces_per_capita DESC;
@@ -127,8 +127,8 @@ ORDER BY armed_forces_per_capita DESC;
 -- ANALISI 4.2
 -- Quali sono le nazioni con il più alto rapporto tra forze armate e popolazione?
 SELECT global_country_info.country, continent, ROUND(SUM(armed_forces_size)/SUM(population),4) AS armed_forces_per_capita, population
-FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Country Information Dataset` AS global_country_info
-LEFT JOIN `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Countries With Continents` AS country_continents
+FROM `your_repository.Global Country Information Dataset` AS global_country_info
+LEFT JOIN `your_repository.Countries With Continents` AS country_continents
 ON global_country_info.country = country_continents.country
 WHERE continent = "Europe"
 GROUP BY global_country_info.country, continent, population
@@ -147,8 +147,8 @@ SELECT
         * 100, 
         2
     ) AS percent_change
-FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Country Information Dataset` AS global_country_info
-LEFT JOIN `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Countries With Continents` AS country_continents
+FROM `your_repository.Global Country Information Dataset` AS global_country_info
+LEFT JOIN `your_repository.Countries With Continents` AS country_continents
 ON global_country_info.country = country_continents.country
 WHERE continent = "Europe"
 GROUP BY global_country_info.country, continent, population
@@ -161,8 +161,8 @@ SELECT
     continent,
     ROUND(SUM(land_areakm2*agricultural_land_percent)/SUM(land_areakm2),2) AS perc_agri_area,
     CONCAT(ROUND(SUM(land_areakm2*agricultural_land_percent/1000000),2),' milions of km2') AS tot_agri_area
-FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Country Information Dataset` AS global_country_info
-LEFT JOIN `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Countries With Continents` AS country_continents
+FROM `your_repository.Global Country Information Dataset` AS global_country_info
+LEFT JOIN `your_repository.Countries With Continents` AS country_continents
 ON global_country_info.country = country_continents.country
 GROUP BY continent
 ORDER BY perc_agri_area DESC;
@@ -173,8 +173,8 @@ SELECT
     global_country_info.country,
     ROUND(SUM(land_areakm2*agricultural_land_percent)/SUM(land_areakm2),2) AS perc_agri_area,
     CONCAT(ROUND(SUM(land_areakm2*agricultural_land_percent/1000000),2),' milions of km2') AS tot_agri_area
-FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Country Information Dataset` AS global_country_info
-LEFT JOIN `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Countries With Continents` AS country_continents
+FROM `your_repository.Global Country Information Dataset` AS global_country_info
+LEFT JOIN `your_repository.Countries With Continents` AS country_continents
 ON global_country_info.country = country_continents.country
 WHERE continent = 'Asia'
 GROUP BY country
@@ -187,8 +187,8 @@ SELECT
     global_country_info.country,
     ROUND(SUM(land_areakm2*agricultural_land_percent)/SUM(land_areakm2),2) AS perc_agri_area,
     CONCAT(ROUND(SUM(land_areakm2*agricultural_land_percent/1000000),2),' milions of km2') AS tot_agri_area
-FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Country Information Dataset` AS global_country_info
-LEFT JOIN `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Countries With Continents` AS country_continents
+FROM `your_repository.Global Country Information Dataset` AS global_country_info
+LEFT JOIN `your_repository.Countries With Continents` AS country_continents
 ON global_country_info.country = country_continents.country
 WHERE continent = 'Asia'
 GROUP BY country
@@ -203,7 +203,7 @@ WITH emission_data AS (
    country,
    MAX(CASE WHEN year = 2000 THEN value_co2_emissions_kt_by_country ELSE NULL END) AS co2_emission_2000,
    MAX(CASE WHEN year = 2019 THEN value_co2_emissions_kt_by_country ELSE NULL END) AS co2_emission_2019
- FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+ FROM `your_repository.Global Data On Sustainable Energy`
  WHERE year IN (2000,2019)
  GROUP BY country
  ),
@@ -234,14 +234,14 @@ WITH emission_data AS (
     country,
     MAX(CASE WHEN year = 2000 THEN value_co2_emissions_kt_by_country ELSE NULL END) AS co2_emission_2000,
     MAX(CASE WHEN year = 2019 THEN value_co2_emissions_kt_by_country ELSE NULL END) AS co2_emission_2019
-  FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+  FROM `your_repository.Global Data On Sustainable Energy`
   WHERE year IN (2000,2019)
   GROUP BY country
   ),
 average_data AS (
   SELECT
     AVG(value_co2_emissions_kt_by_country) AS average_co2_emission_2000
-  FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+  FROM `your_repository.Global Data On Sustainable Energy`
   WHERE year = 2000
   ),
 delta_data AS (
@@ -271,7 +271,7 @@ WITH renewables_data AS (
    country,
    MAX(CASE WHEN year = 2000 THEN electricity_from_renewables_TWh ELSE NULL END) AS renewables_2000,
    MAX(CASE WHEN year = 2019 THEN electricity_from_renewables_TWh ELSE NULL END) AS renewables_2019
- FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+ FROM `your_repository.Global Data On Sustainable Energy`
  WHERE year IN (2000,2019) AND electricity_from_renewables_TWh > 0
  GROUP BY country
  ),
@@ -301,14 +301,14 @@ WITH renewables_data AS (
     country,
     MAX(CASE WHEN year = 2000 THEN electricity_from_renewables_TWh ELSE NULL END) AS renewables_2000,
     MAX(CASE WHEN year = 2019 THEN electricity_from_renewables_TWh ELSE NULL END) AS renewables_2019
-  FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+  FROM `your_repository.Global Data On Sustainable Energy`
   WHERE year IN (2000,2019) AND electricity_from_renewables_TWh > 0
   GROUP BY country
   ),
 average_data AS (
   SELECT
     AVG(electricity_from_renewables_TWh) AS average_renewables_2000
-  FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+  FROM `your_repository.Global Data On Sustainable Energy`
   WHERE year = 2000
   ),
 delta_data AS (
@@ -338,7 +338,7 @@ WITH flows_data AS (
     country,
     MAX(CASE WHEN year = 2000 THEN financial_flows_to_developing_countries_US ELSE NULL END) AS flows_2000,
     MAX(CASE WHEN year = 2019 THEN financial_flows_to_developing_countries_US ELSE NULL END) AS flows_2019
-  FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+  FROM `your_repository.Global Data On Sustainable Energy`
   WHERE year IN (2000,2019) AND financial_flows_to_developing_countries_US > 0
   GROUP BY country
   ),
@@ -368,7 +368,7 @@ WITH flows_data AS (
     country,
     MAX(CASE WHEN year = 2000 THEN financial_flows_to_developing_countries_US ELSE NULL END) AS flows_2000,
     MAX(CASE WHEN year = 2019 THEN financial_flows_to_developing_countries_US ELSE NULL END) AS flows_2019
-  FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+  FROM `your_repository.Global Data On Sustainable Energy`
   WHERE year IN (2000,2019) AND financial_flows_to_developing_countries_US > 0
   GROUP BY country
   ),
@@ -400,7 +400,7 @@ WITH flows_and_gdpcapita_data AS (
     MAX(CASE WHEN year = 2019 THEN financial_flows_to_developing_countries_US ELSE NULL END) AS flows_2019,
     MAX(CASE WHEN year = 2000 THEN gdp_per_capita ELSE NULL END) AS gdpcapita_2000,
     MAX(CASE WHEN year = 2019 THEN gdp_per_capita ELSE NULL END) AS gdpcapita_2019,
-  FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+  FROM `your_repository.Global Data On Sustainable Energy`
   WHERE year IN (2000,2019)
   GROUP BY country
   ),
@@ -435,7 +435,7 @@ WITH flows_and_gdpcapita_data AS (
     MAX(CASE WHEN year = 2019 THEN financial_flows_to_developing_countries_US ELSE NULL END) AS flows_2019,
     MAX(CASE WHEN year = 2000 THEN gdp_per_capita ELSE NULL END) AS gdpcapita_2000,
     MAX(CASE WHEN year = 2019 THEN gdp_per_capita ELSE NULL END) AS gdpcapita_2019,
-  FROM `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+  FROM `your_repository.Global Data On Sustainable Energy`
   WHERE year IN (2000,2019)
   GROUP BY country
   ),
@@ -473,7 +473,7 @@ FROM (
         MAX(electricity_from_renewables_TWh) AS renewable_elect,
         MAX(gdp_per_capita) AS gdp_per_capita
     FROM
-        `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+        `your_repository.Global Data On Sustainable Energy`
     WHERE gdp_per_capita IS NOT NULL
     GROUP BY
         country, year
@@ -499,7 +499,7 @@ FROM (
         MAX(electricity_from_renewables_TWh) AS renewable_elect,
         MAX(gdp_per_capita) AS gdp_per_capita
     FROM
-        `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+        `your_repository.Global Data On Sustainable Energy`
     WHERE gdp_per_capita IS NOT NULL
     GROUP BY
         country, year
@@ -523,7 +523,7 @@ SELECT
     MAX(CASE WHEN Year = 2015 THEN access_to_electricity ELSE NULL END) AS `2015`,
     MAX(CASE WHEN Year = 2020 THEN access_to_electricity ELSE NULL END) AS `2020`
 FROM
-    `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+    `your_repository.Global Data On Sustainable Energy`
 WHERE
     country = "Italy"
 GROUP BY
@@ -538,7 +538,7 @@ SELECT
     MAX(CASE WHEN Year = 2015 THEN electricity_from_fossil_fuels_TWh ELSE NULL END) AS `2015`,
     MAX(CASE WHEN Year = 2020 THEN electricity_from_fossil_fuels_TWh ELSE NULL END) AS `2020`
 FROM
-    `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+    `your_repository.Global Data On Sustainable Energy`
 WHERE
     country = "Italy"
 GROUP BY
@@ -553,7 +553,7 @@ SELECT
     MAX(CASE WHEN Year = 2015 THEN electricity_from_nuclear_TWh ELSE NULL END) AS `2015`,
     MAX(CASE WHEN Year = 2020 THEN electricity_from_nuclear_TWh ELSE NULL END) AS `2020`
 FROM
-    `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+    `your_repository.Global Data On Sustainable Energy`
 WHERE
     country = "Italy"
 GROUP BY
@@ -568,7 +568,7 @@ SELECT
     MAX(CASE WHEN Year = 2015 THEN electricity_from_renewables_TWh ELSE NULL END) AS `2015`,
     MAX(CASE WHEN Year = 2020 THEN electricity_from_renewables_TWh ELSE NULL END) AS `2020`
 FROM
-    `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+    `your_repository.Global Data On Sustainable Energy`
 WHERE
     country = "Italy"
 GROUP BY
@@ -583,7 +583,7 @@ SELECT
     MAX(CASE WHEN Year = 2015 THEN value_co2_emissions_kt_by_country ELSE NULL END) AS `2015`,
     MAX(CASE WHEN Year = 2020 THEN value_co2_emissions_kt_by_country ELSE NULL END) AS `2020`
 FROM
-    `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+    `your_repository.Global Data On Sustainable Energy`
 WHERE
     country = "Italy"
 GROUP BY
@@ -598,7 +598,7 @@ SELECT
     MAX(CASE WHEN Year = 2015 THEN gdp_growth ELSE NULL END) AS `2015`,
     MAX(CASE WHEN Year = 2020 THEN gdp_growth ELSE NULL END) AS `2020`
 FROM
-    `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+    `your_repository.Global Data On Sustainable Energy`
 WHERE
     country = "Italy"
 GROUP BY
@@ -613,7 +613,7 @@ SELECT
     MAX(CASE WHEN Year = 2015 THEN density_nP_Km2 ELSE NULL END) AS `2015`,
     MAX(CASE WHEN Year = 2020 THEN density_nP_Km2 ELSE NULL END) AS `2020`
 FROM
-    `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+    `your_repository.Global Data On Sustainable Energy`
 WHERE
     country = "Italy"
 GROUP BY
@@ -628,7 +628,7 @@ SELECT
     MAX(CASE WHEN Year = 2015 THEN gdp_per_capita ELSE NULL END) AS `2015`,
     MAX(CASE WHEN Year = 2020 THEN gdp_per_capita ELSE NULL END) AS `2020`
 FROM
-    `seraphic-music-398317.Start2Impact_DataAnalytics_SQL.Global Data On Sustainable Energy`
+    `your_repository.Global Data On Sustainable Energy`
 WHERE
     country = "Italy"
 GROUP BY
