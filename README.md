@@ -3,5 +3,4 @@ If you're here probably you are part of Start2Impact community so please don't c
 Here you will find resources for the following masters:
 
 - Data Science;
-- Data Analytics;
-- Digital Marketing.
+- Data Analytics.
